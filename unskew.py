@@ -177,6 +177,7 @@ def camera_demo():
     rec.start()
     cam = cv2.VideoCapture(0)
     cv2.namedWindow("Input")
+    cv2.moveWindow("Input", 1000, 0)
     cv2.namedWindow("Output")
     dst = None
 
@@ -217,6 +218,7 @@ if __name__ == "__main__":
         cam = cv2.VideoCapture(0)
         cv2.namedWindow("Input")
         cv2.namedWindow("Output")
+        cv2.moveWindow("Input", 1000, 0)
         dst = None
         print("made more windows")
 
