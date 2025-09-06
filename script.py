@@ -1,7 +1,7 @@
 import base64
 import mimetypes
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
 from openai import OpenAI
 
 def encode_image_b64(image_path: str) -> tuple[str, str]:
