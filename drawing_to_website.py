@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
-def encode_image_b64(image_path: str) -> tuple[str, str]:
+def encode_image_b64(image_path: str):
     mime, _ = mimetypes.guess_type(image_path)
     if mime is None:
         mime = "image/jpeg"
@@ -12,10 +12,10 @@ def encode_image_b64(image_path: str) -> tuple[str, str]:
         b64 = base64.b64encode(f.read()).decode("utf-8")
     return mime, b64
 
-def generate_landing_page_from_image(image_path: str) -> str:
+def generate_landing_page_from_image(image_path: str):
     mime, b64 = encode_image_b64(image_path)
     prompt = (
-        "You are a web developer. Given the following image of a hand-drawn landing page, "
+        "You are a senior web developer. Given the following image of a hand-drawn landing page, "
         "generate a complete single-file HTML for a modern, responsive landing page. "
         "Use Tailwind CSS via CDN for all styling. Only output the code, no explanations. "
         "Keep the exact layout of the original drawing in the landing page (i.e. if the designer wants an image at the bottom, keep it on the bottom) "

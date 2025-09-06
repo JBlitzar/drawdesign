@@ -4,41 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>Fizzle Landing Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
-
-    <nav class="bg-blue-600 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="text-white text-lg font-bold">Logo</div>
-            <ul class="flex space-x-4">
-                <li><a href="#" class="text-white">Home</a></li>
-                <li><a href="#" class="text-white">About</a></li>
-                <li><a href="#" class="text-white">Services</a></li>
-                <li><a href="#" class="text-white">Contact</a></li>
-            </ul>
+    <header class="flex justify-between items-center p-4 bg-white shadow">
+        <div class="flex items-center">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">O</div>
+            <nav class="ml-4">
+                <a href="#" class="text-gray-700 hover:underline">Home</a>
+                <a href="#" class="ml-4 text-gray-700 hover:underline">Contact Us</a>
+            </nav>
         </div>
-    </nav>
-
-    <header class="bg-gradient-to-r from-green-400 to-blue-500 text-white text-center py-20">
-        <h1 class="text-5xl font-bold mb-4">Title</h1>
-        <p class="text-xl mb-8">Some engaging text goes here.</p>
-        <a href="#" class="bg-white text-blue-600 px-6 py-3 rounded-full shadow-lg hover:bg-gray-100">CTA</a>
+        <div class="flex items-center">
+            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">👤</div>
+            <div class="ml-4 w-8 h-8 bg-gray-300 rounded flex items-center justify-center">☰</div>
+        </div>
     </header>
-
-    <main class="container mx-auto my-10">
-        <div class="flex justify-center">
-            <div class="w-3/4 bg-gray-200 h-64 flex items-center justify-center">
-                <span class="text-gray-500">Image Placeholder</span>
+    <main class="p-8">
+        <section class="text-center">
+            <h1 class="text-2xl font-bold">Best <span class="text-blue-500">ENERGY</span> Drink</h1>
+            <h2 class="text-4xl font-extrabold text-blue-500">FIZZLE</h2>
+            <button class="mt-4 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100">ORDER</button>
+        </section>
+        <section class="mt-8 flex justify-center space-x-4">
+            <div class="w-16 h-16 bg-gray-300 flex items-center justify-center">X</div>
+            <div class="w-24 h-24 bg-gray-300 flex items-center justify-center">X</div>
+            <div class="w-16 h-16 bg-gray-300 flex items-center justify-center">X</div>
+        </section>
+        <section class="mt-8 text-center">
+            <h3 class="text-xl font-bold"><span class="text-blue-500">Fizz</span> (TEXT) <span class="text-blue-500">Fizz</span></h3>
+        </section>
+        <section class="mt-8 grid grid-cols-3 gap-4 text-center">
+            <div>
+                <p>1.</p>
+                <p class="text-blue-500 font-bold">CEO</p>
             </div>
-        </div>
+            <div>
+                <p>2.</p>
+                <p class="text-blue-500 font-bold">CTO</p>
+            </div>
+            <div>
+                <p>3.</p>
+                <p class="text-blue-500 font-bold">CPO</p>
+            </div>
+        </section>
     </main>
-
-    <footer class="bg-blue-600 text-white text-center py-4">
-        <p>&copy; 2023 Company Name. All rights reserved.</p>
-    </footer>
-
 </body>
 </html>
 ```

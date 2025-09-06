@@ -131,5 +131,5 @@ def camera_demo():
 
 
 if __name__ == "__main__":
-    # capture_unskewed_photo()
-    camera_demo()
+    capture_unskewed_photo()
+    #camera_demo()
