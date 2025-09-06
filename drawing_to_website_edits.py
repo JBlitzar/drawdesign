@@ -25,7 +25,6 @@ def update_landing_page_with_edits(new_image_path: str, old_image_path: str, htm
     with open(html_path, "r") as f:
         html_content = f.read()
 
-
     prompt = (
         "You are a senior web developer. Given the following two images: the first is a hand-drawn landing page with edits (edits are in a different color), "
         "and the second is the original version without edits (just in black). You are also given the current HTML code for the landing page. "
