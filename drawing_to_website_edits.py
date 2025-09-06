@@ -70,6 +70,7 @@ def update_landing_page_with_edits(
         max_output_tokens=3000,
         temperature=0.2,
     )
+    print("result:", result.output_text)
     return result.output_text
 
 

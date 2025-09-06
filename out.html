@@ -1,29 +1,84 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Energy Drink Landing Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white min-h-screen flex flex-col items-center justify-center font-sans">
-    <div class="text-center px-4">
-      <h1 class="text-4xl md:text-5xl font-bold mb-6">The best energy drink</h1>
-      <button class="bg-white text-purple-900 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-purple-100 transition mb-10">
-        Order now
-      </button>
-      <div class="w-full max-w-md mx-auto bg-white/10 backdrop-blur-md rounded-xl p-10 shadow-2xl">
-        <div class="w-full h-64 bg-white/20 rounded-lg flex items-center justify-center">
-          <div class="w-20 h-40 bg-white rounded-xl flex flex-col items-center justify-center shadow-lg">
-            <div class="w-10 h-2 bg-gray-300 rounded-full mt-2"></div>
-            <div class="text-black text-3xl font-bold mt-6">⚡</div>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Energy Landing Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-blue-100 via-white to-blue-200 min-h-screen flex flex-col justify-between font-sans">
+
+  <!-- Header -->
+  <header class="w-full py-6 bg-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-red-600">Energy</h1>
+      <nav class="space-x-6 text-gray-700 font-medium">
+        <a href="#" class="hover:text-red-500">Home</a>
+        <a href="#" class="hover:text-red-500">Shop</a>
+        <a href="#" class="hover:text-red-500">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="flex-1 flex flex-col items-center justify-center text-center px-4 py-20 bg-gradient-to-br from-red-100 to-pink-200">
+    <div class="max-w-xl">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-red-700 mb-6">The best energy drink</h2>
+      <button class="bg-red-500 hover:bg-red-600 text-white font-semibold px-10 py-4 text-lg rounded-full shadow-xl transition">Order Now</button>
+    </div>
+  </section>
+
+  <!-- Character Illustration -->
+  <section class="py-16 bg-white flex justify-center items-center">
+    <div class="w-64 h-64 bg-gray-200 rounded-full flex flex-col items-center justify-center shadow-lg relative">
+      <!-- Placeholder for Energy Can Face -->
+      <div class="w-16 h-16 bg-red-400 rounded-full mb-2 flex items-center justify-center">
+        <span class="text-white text-2xl font-bold">⚡</span>
       </div>
-      <div class="mt-16 w-full flex justify-center">
-        <div class="w-24 h-2 bg-white/30 rounded-full mb-2"></div>
+      <div class="text-xl font-bold text-gray-800">Energy</div>
+      <!-- Eyes -->
+      <div class="absolute top-16 left-1/3 w-4 h-4 bg-black rounded-full"></div>
+      <div class="absolute top-16 right-1/3 w-4 h-4 bg-black rounded-full"></div>
+      <!-- Legs -->
+      <div class="absolute bottom-4 left-1/3 w-1 h-6 bg-gray-700"></div>
+      <div class="absolute bottom-4 right-1/3 w-1 h-6 bg-gray-700"></div>
+    </div>
+  </section>
+
+  <!-- Wavy Decorative Section -->
+  <section class="bg-gradient-to-r from-blue-200 to-purple-200 py-12">
+    <div class="max-w-4xl mx-auto text-center">
+      <h3 class="text-3xl font-bold text-purple-800 mb-4">Fizzing with Personality</h3>
+      <p class="text-lg text-gray-700">Our Energy Can is more than just a drink. It's a vibe. It's a lifestyle. It's a bubbly companion for your everyday adventures.</p>
+    </div>
+  </section>
+
+  <!-- Additional Soda Cans Gallery -->
+  <section class="bg-white py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <h4 class="text-2xl font-bold text-center text-gray-800 mb-8">Explore More Flavors</h4>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="w-full h-40 bg-red-300 rounded-lg shadow-md flex items-center justify-center text-white font-bold text-lg">Can 1</div>
+        <div class="w-full h-40 bg-yellow-300 rounded-lg shadow-md flex items-center justify-center text-white font-bold text-lg">Can 2</div>
+        <div class="w-full h-40 bg-green-300 rounded-lg shadow-md flex items-center justify-center text-white font-bold text-lg">Can 3</div>
+        <div class="w-full h-40 bg-blue-300 rounded-lg shadow-md flex items-center justify-center text-white font-bold text-lg">Can 4</div>
       </div>
     </div>
-  </body>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-6 md:mb-0">
+        <h4 class="text-xl font-semibold">Stay Energized</h4>
+        <p class="text-gray-400">© 2025 Energy Inc. All rights reserved.</p>
+      </div>
+      <div class="w-48 h-32 bg-gray-700 rounded-lg flex items-center justify-center text-gray-300">
+        Image Placeholder
+      </div>
+    </div>
+  </footer>
+
+</body>
 </html>

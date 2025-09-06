@@ -218,6 +218,7 @@ if __name__ == "__main__":
         cv2.namedWindow("Input")
         cv2.namedWindow("Output")
         dst = None
+        print("made more windows")
 
         while True:
             ret, frame = cam.read()
@@ -229,13 +230,18 @@ if __name__ == "__main__":
                     pass
                 cv2.imshow("Output", frame)
             if cv2.waitKey(1) == ord("q"):
+                print("cv2.waitkey was q I guess")
                 break
+            print("cv2 looopoa")
+
+        print("done")
 
         cam.release()
         rec.stop()
         last_frame = np.asarray(Image.open("image.jpg"))
         save(last_frame, "prev_image.jpg")
         save(np.asarray(dst), "image.jpg")
+        print("saved images etc, updating landing page......")
 
         out = (
             update_landing_page_with_edits(
