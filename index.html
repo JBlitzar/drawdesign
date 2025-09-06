@@ -33,6 +33,26 @@
       imgElement.onload = async function () {
         cv = cv instanceof Promise ? await cv : cv;
         let mat = cv.imread(imgElement);
+        cv.cvtColor(mat, mat, cv.COLOR_RGB2GRAY);
+        let a = mat.data;
+        cv.normalize(mat, mat, 0, 255, cv.NORM_MINMAX);
+        cv.threshold(mat, mat, 160, 255, cv.THRESH_BINARY);
+
+        for (let i = 0; i < 2; i++) {
+          cv.dilate(
+            mat,
+            mat,
+            cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(5, 5))
+          );
+        }
+        for (let i = 0; i < 3; i++) {
+          cv.erode(
+            mat,
+            mat,
+            cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(5, 5))
+          );
+        }
+
         cv.imshow("canvasOutput", mat);
         mat.delete();
       };
