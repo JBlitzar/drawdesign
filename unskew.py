@@ -116,6 +116,20 @@ def main(inp="photo.jpg", out="unskewed.png"):
     save(dst, out)
 
 
+def camera_demo():
+    cam = cv2.VideoCapture(0)
+    cv2.namedWindow("Input")
+    while True:
+        ret, frame = cam.read()
+        if ret:
+            dst = unskew(frame)
+            cv2.imshow("Input", dst)
+        if cv2.waitKey(1) == ord("q"):
+            break
+
+    cam.release()
+
+
 if __name__ == "__main__":
     # capture_unskewed_photo()
-    main()
+    camera_demo()
