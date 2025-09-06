@@ -222,4 +222,9 @@ __marimo__/
 
 
 .DS_Store
+*.wav
+*.jpg
+*.jpeg
+*.png
+*.html
 
