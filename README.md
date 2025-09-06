@@ -1,5 +1,5 @@
 # drawdesign
 
-run python script.py
+run python unskew.py
 
 make sure your .env file is loaded

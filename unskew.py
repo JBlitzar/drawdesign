@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import itertools
 from drawing_to_website import generate_landing_page_from_image
+from drawing_to_website_edits import update_landing_page_with_edits
 
 
 def save(img, name="out.png"):
@@ -235,7 +236,9 @@ if __name__ == "__main__":
         save(np.asarray(dst), "image.jpg")
 
         out = (
-            magic_edit("image.jpg", "prev_image.jpg", "out.html", "temp_audio.wav")
+            update_landing_page_with_edits(
+                "image.jpg", "prev_image.jpg", "out.html", "temp_audio.wav"
+            )
             .replace("```html", "")
             .replace("```", "")
         )
