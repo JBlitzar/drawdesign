@@ -117,7 +117,63 @@ def main(inp="photo.jpg", out="unskewed.png"):
     save(dst, out)
 
 
+import wave, threading, pyaudio
+
+
+class AudioRecorder:
+    # Audio class based on pyAudio and Wave
+    def __init__(self):
+        self.open = True
+        self.rate = 44100
+        self.frames_per_buffer = 1024
+        self.channels = 1
+        self.format = pyaudio.paInt16
+        self.audio_filename = "temp_audio.wav"
+        self.audio = pyaudio.PyAudio()
+        self.stream = self.audio.open(
+            format=self.format,
+            channels=self.channels,
+            rate=self.rate,
+            input=True,
+            frames_per_buffer=self.frames_per_buffer,
+        )
+        self.audio_frames = []
+
+    # Audio starts being recorded
+    def record(self):
+        self.stream.start_stream()
+        while self.open == True:
+            data = self.stream.read(self.frames_per_buffer)
+            self.audio_frames.append(data)
+            if self.open == False:
+                break
+
+    # Finishes the audio recording therefore the thread too
+    def stop(self):
+        if self.open == True:
+            self.open = False
+            self.stream.stop_stream()
+            self.stream.close()
+            self.audio.terminate()
+
+            waveFile = wave.open(self.audio_filename, "wb")
+            waveFile.setnchannels(self.channels)
+            waveFile.setsampwidth(self.audio.get_sample_size(self.format))
+            waveFile.setframerate(self.rate)
+            waveFile.writeframes(b"".join(self.audio_frames))
+            waveFile.close()
+
+        pass
+
+    # Launches the audio recording function using a thread
+    def start(self):
+        audio_thread = threading.Thread(target=self.record)
+        audio_thread.start()
+
+
 def camera_demo():
+    rec = AudioRecorder()
+    rec.start()
     cam = cv2.VideoCapture(0)
     cv2.namedWindow("Input")
     cv2.namedWindow("Output")
@@ -134,11 +190,11 @@ def camera_demo():
             cv2.imshow("Output", frame)
         if cv2.waitKey(1) == ord("q"):
             break
-
+    rec.stop()
     cam.release()
     save(np.asarray(dst), "image.jpg")
     out = (
-        generate_landing_page_from_image("image.jpg")
+        generate_landing_page_from_image("image.jpg", "temp_audio.wav")
         .replace("```html", "")
         .replace("```", "")
     )
@@ -151,9 +207,10 @@ def camera_demo():
 
 if __name__ == "__main__":
     # capture_unskewed_photo()
+    camera_demo()
     while True:
-        camera_demo()
-
+        rec = AudioRecorder()
+        rec.start()
         cam = cv2.VideoCapture(0)
         cv2.namedWindow("Input")
         cv2.namedWindow("Output")
@@ -172,12 +229,13 @@ if __name__ == "__main__":
                 break
 
         cam.release()
+        rec.stop()
         last_frame = np.asarray(Image.open("image.jpg"))
         save(last_frame, "prev_image.jpg")
         save(np.asarray(dst), "image.jpg")
 
         out = (
-            magic_edit("image.jpg", "prev_image.jpg", "out.html")
+            magic_edit("image.jpg", "prev_image.jpg", "out.html", "temp_audio.wav")
             .replace("```html", "")
             .replace("```", "")
         )
