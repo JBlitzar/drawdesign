@@ -17,7 +17,11 @@ def generate_landing_page_from_image(image_path: str) -> str:
     prompt = (
         "You are a web developer. Given the following image of a hand-drawn landing page, "
         "generate a complete single-file HTML for a modern, responsive landing page. "
-        "Use Tailwind CSS via CDN for all styling. Only output the code, no explanations."
+        "Use Tailwind CSS via CDN for all styling. Only output the code, no explanations. "
+        "Keep the exact layout of the original drawing in the landing page (i.e. if the designer wants an image at the bottom, keep it on the bottom) "
+        "Use eye-catching, beautiful UI/UX colors throughout. If there are empty spaces or placeholders "
+        "that have not been sketched in by the designer, fill them in with visually appealing, cool, and modern colors "
+        "and layouts so the page looks polished and attractive overall. DO NOT ADD IN IMAGES!, just use placeholders"
     )
     client = OpenAI()
     result = client.responses.create(
@@ -31,7 +35,7 @@ def generate_landing_page_from_image(image_path: str) -> str:
                 ],
             }
         ],
-        max_output_tokens=5000,
+        max_output_tokens=2000,
         temperature=0.2,
     )
     return result.output_text
@@ -42,7 +46,7 @@ if __name__ == "__main__":
     if not key:
         raise ValueError("Missing OPENAI_API_KEY (or OPENAI_KEY) in environment.")
     os.environ["OPENAI_API_KEY"] = key
-    image_path = "drawing.jpeg"
+    image_path = "test.jpeg"
     html = generate_landing_page_from_image(image_path)
     out_path = "generated_landing_page.html"
     with open(out_path, "w", encoding="utf-8") as f:
