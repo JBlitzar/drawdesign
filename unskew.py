@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image
 import itertools
+from drawing_to_website import generate_landing_page_from_image
 
 
 def save(img, name="out.png"):
@@ -119,15 +120,22 @@ def main(inp="photo.jpg", out="unskewed.png"):
 def camera_demo():
     cam = cv2.VideoCapture(0)
     cv2.namedWindow("Input")
+    dst = None
+
     while True:
         ret, frame = cam.read()
         if ret:
             dst = unskew(frame)
-            cv2.imshow("Input", dst)
+            try:
+                cv2.imshow("Input", dst)
+            except cv2.error:
+                cv2.imshow("input", frame)
         if cv2.waitKey(1) == ord("q"):
             break
 
     cam.release()
+    save(np.asarray(dst), "image.jpg")
+    print(generate_landing_page_from_image("image.jpg"))
 
 
 if __name__ == "__main__":
