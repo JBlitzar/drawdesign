@@ -17,7 +17,7 @@ def save(img, name="out.png"):
     im.save(name)
 
 
-img = np.array(Image.open("test.png"))
+img = np.array(Image.open("photo.jpg"))
 print(img.shape)
 
 gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -25,15 +25,25 @@ gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 gray = gray / np.max(gray) * 255
 
 
-gray = (gray > 160) * 255
+gray = (gray > 180) * 255
 
 gray = gray.astype(np.uint8)
 
 save(gray, "gray-init.png")
 
 kernel = np.ones((5, 5), np.uint8)
-gray = cv2.dilate(gray, kernel, iterations=2)
-gray = cv2.erode(gray, kernel, iterations=2)
+
+gray = cv2.erode(gray, kernel, iterations=5)
+gray = cv2.dilate(gray, kernel, iterations=5)
+
+kernel = np.ones((11, 11), np.uint8)
+
+gray = cv2.dilate(gray, kernel, iterations=5)
+gray = cv2.erode(gray, kernel, iterations=5)
+
+# gray = cv2.dilate(gray, kernel, iterations=2)
+# gray = cv2.erode(gray, kernel, iterations=2)
+
 
 save(gray, "gray.png")
 
@@ -87,7 +97,7 @@ if contours:
             corners = [a, c, b, d]
             break
 
-    size = (int(8.5 * 100), int(11 * 100))
+    size = (int(11 * 100), int(8.5 * 100))
     pts2 = np.float32([[0, 0], [size[0], 0], [size[0], size[1]], [0, size[1]]])
     # https://math.stackexchange.com/questions/2789094/deskew-and-rotate-a-photographed-rectangular-image-aka-perspective-correction
     M, mask = cv2.findHomography(np.float32(corners), pts2)
