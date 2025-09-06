@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+
 def encode_image_b64(image_path: str):
     mime, _ = mimetypes.guess_type(image_path)
     if mime is None:
@@ -11,6 +12,7 @@ def encode_image_b64(image_path: str):
     with open(image_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode("utf-8")
     return mime, b64
+
 
 def generate_landing_page_from_image(image_path: str):
     mime, b64 = encode_image_b64(image_path)
@@ -25,7 +27,7 @@ def generate_landing_page_from_image(image_path: str):
     )
     client = OpenAI()
     result = client.responses.create(
-        model="gpt-4o",
+        model="chatgpt-4o-latest",
         input=[
             {
                 "role": "user",
@@ -39,6 +41,7 @@ def generate_landing_page_from_image(image_path: str):
         temperature=0.2,
     )
     return result.output_text
+
 
 if __name__ == "__main__":
     load_dotenv()

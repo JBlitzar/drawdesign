@@ -1,55 +1,36 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fizzle Landing Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <header class="flex justify-between items-center p-4 bg-white shadow">
-        <div class="flex items-center">
-            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">O</div>
-            <nav class="ml-4">
-                <a href="#" class="text-gray-700 hover:underline">Home</a>
-                <a href="#" class="ml-4 text-gray-700 hover:underline">Contact Us</a>
-            </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
+      <div class="text-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">Coke</h1>
+        <p class="text-gray-600">Refresh your day with a cool can of Coke!</p>
+      </div>
+      <div class="flex justify-center mb-6">
+        <div
+          class="bg-gray-200 rounded-full h-32 w-32 flex items-center justify-center"
+        >
+          <div class="text-6xl">🥤</div>
         </div>
-        <div class="flex items-center">
-            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">👤</div>
-            <div class="ml-4 w-8 h-8 bg-gray-300 rounded flex items-center justify-center">☰</div>
-        </div>
-    </header>
-    <main class="p-8">
-        <section class="text-center">
-            <h1 class="text-2xl font-bold">Best <span class="text-blue-500">ENERGY</span> Drink</h1>
-            <h2 class="text-4xl font-extrabold text-blue-500">FIZZLE</h2>
-            <button class="mt-4 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100">ORDER</button>
-        </section>
-        <section class="mt-8 flex justify-center space-x-4">
-            <div class="w-16 h-16 bg-gray-300 flex items-center justify-center">X</div>
-            <div class="w-24 h-24 bg-gray-300 flex items-center justify-center">X</div>
-            <div class="w-16 h-16 bg-gray-300 flex items-center justify-center">X</div>
-        </section>
-        <section class="mt-8 text-center">
-            <h3 class="text-xl font-bold"><span class="text-blue-500">Fizz</span> (TEXT) <span class="text-blue-500">Fizz</span></h3>
-        </section>
-        <section class="mt-8 grid grid-cols-3 gap-4 text-center">
-            <div>
-                <p>1.</p>
-                <p class="text-blue-500 font-bold">CEO</p>
-            </div>
-            <div>
-                <p>2.</p>
-                <p class="text-blue-500 font-bold">CTO</p>
-            </div>
-            <div>
-                <p>3.</p>
-                <p class="text-blue-500 font-bold">CPO</p>
-            </div>
-        </section>
-    </main>
-</body>
+      </div>
+      <div class="text-center">
+        <button
+          class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300"
+        >
+          Learn More
+        </button>
+      </div>
+    </div>
+  </body>
 </html>
-```

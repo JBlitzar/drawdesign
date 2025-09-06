@@ -195,7 +195,9 @@ def camera_demo():
     cam.release()
     save(np.asarray(dst), "image.jpg")
     out = (
-        generate_landing_page_from_image("image.jpg", "temp_audio.wav")
+        generate_landing_page_from_image(
+            "image.jpg",
+        )  # "temp_audio.wav")
         .replace("```html", "")
         .replace("```", "")
     )
@@ -209,3 +211,45 @@ def camera_demo():
 if __name__ == "__main__":
     # capture_unskewed_photo()
     camera_demo()
+    print("camera demo run!")
+    while True:
+        print("running again...")
+        rec = AudioRecorder()
+        rec.start()
+        cam = cv2.VideoCapture(0)
+        cv2.namedWindow("Input")
+        cv2.namedWindow("Output")
+        dst = None
+
+        while True:
+            ret, frame = cam.read()
+            if ret:
+                dst = unskew(frame)
+                try:
+                    cv2.imshow("Input", dst)
+                except cv2.error:
+                    pass
+                cv2.imshow("Output", frame)
+            if cv2.waitKey(1) == ord("q"):
+                break
+
+        cam.release()
+        rec.stop()
+        last_frame = np.asarray(Image.open("image.jpg"))
+        save(last_frame, "prev_image.jpg")
+        save(np.asarray(dst), "image.jpg")
+
+        out = (
+            update_landing_page_with_edits(
+                "image.jpg",
+                "prev_image.jpg",
+                "out.html",  # , "temp_audio.wav"
+            )
+            .replace("```html", "")
+            .replace("```", "")
+        )
+        with open("out.html", "w+") as f:
+            f.write(out)
+        import os
+
+        os.system("open out.html")

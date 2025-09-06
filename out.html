@@ -1,29 +1,69 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
-        <div class="text-center mb-6">
-            <h1 class="text-4xl font-bold text-gray-800">Coke</h1>
-            <p class="text-gray-600">Refresh your day with a cool can of Coke!</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flower Shop</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen">
+    <header class="bg-white shadow-md">
+      <div
+        class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <nav class="flex space-x-6">
+          <a href="#" class="text-gray-700 font-semibold hover:text-purple-600"
+            >About</a
+          >
+          <a href="#" class="text-gray-700 font-semibold hover:text-purple-600"
+            >Shop</a
+          >
+          <a href="#" class="text-gray-700 font-semibold hover:text-purple-600"
+            >Contact</a
+          >
+        </nav>
+        <a
+          href="#"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          >Login</a
+        >
+      </div>
+    </header>
+
+    <main class="flex items-center justify-center py-16 px-4">
+      <div
+        class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full text-center"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <div
+            class="bg-purple-100 rounded-full h-20 w-20 flex items-center justify-center text-3xl"
+          >
+            🌸
+          </div>
+          <div>
+            <h1 class="text-4xl font-bold text-gray-800">Flower Shop</h1>
+            <p class="text-gray-600 mt-2">Nice description</p>
+          </div>
+          <div
+            class="bg-purple-100 rounded-full h-20 w-20 flex items-center justify-center text-3xl"
+          >
+            🌸
+          </div>
         </div>
-        <div class="flex justify-center mb-6">
-            <div class="bg-gray-200 rounded-full h-32 w-32 flex items-center justify-center">
-                <div class="text-6xl">🥤</div>
-            </div>
+        <div class="mt-6">
+          <button
+            class="bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition duration-300"
+          >
+            Shop Here
+          </button>
         </div>
-        <div class="text-center">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition duration-300">
-                Learn More
-            </button>
+        <div class="mt-10 flex justify-center">
+          <div class="text-4xl">🌼</div>
         </div>
-    </div>
-</body>
+      </div>
+    </main>
+  </body>
 </html>
-```
