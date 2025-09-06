@@ -104,7 +104,7 @@ def unskew(img):
 
         dst = cv2.warpPerspective(img, M, size)
 
-        dst = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        dst = cv2.rotate(dst, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         return dst
 
@@ -117,5 +117,5 @@ def main(inp="photo.jpg", out="unskewed.png"):
 
 
 if __name__ == "__main__":
-    capture_unskewed_photo()
-    # main()
+    # capture_unskewed_photo()
+    main()
