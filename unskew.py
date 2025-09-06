@@ -120,6 +120,7 @@ def main(inp="photo.jpg", out="unskewed.png"):
 def camera_demo():
     cam = cv2.VideoCapture(0)
     cv2.namedWindow("Input")
+    cv2.namedWindow("Output")
     dst = None
 
     while True:
@@ -129,13 +130,23 @@ def camera_demo():
             try:
                 cv2.imshow("Input", dst)
             except cv2.error:
-                cv2.imshow("input", frame)
+                pass
+            cv2.imshow("Output", frame)
         if cv2.waitKey(1) == ord("q"):
             break
 
     cam.release()
     save(np.asarray(dst), "image.jpg")
-    print(generate_landing_page_from_image("image.jpg"))
+    out = (
+        generate_landing_page_from_image("image.jpg")
+        .replace("```html", "")
+        .replace("```", "")
+    )
+    with open("out.html", "w+") as f:
+        f.write(out)
+    import os
+
+    os.system("open out.html")
 
 
 if __name__ == "__main__":
