@@ -13,12 +13,15 @@ def capture_unskewed_photo(out="unskewed.png"):
     cam = cv2.VideoCapture(0)
     ret = False
     frame = None
+    for _ in range(5):
+        ret, frame = cam.read()
     while not ret:
         ret, frame = cam.read()
 
     cam.release()
     dst = unskew(frame)
     save(dst, out)
+    save(frame, "img.jpg")
 
 
 def unskew(img):
@@ -100,6 +103,9 @@ def unskew(img):
         M, mask = cv2.findHomography(np.float32(corners), pts2)
 
         dst = cv2.warpPerspective(img, M, size)
+
+        dst = cv2.rotate(dst, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
         return dst
 
 
@@ -111,5 +117,5 @@ def main(inp="photo.jpg", out="unskewed.png"):
 
 
 if __name__ == "__main__":
-    capture_unskewed_photo()
-    # main()
+    # capture_unskewed_photo()
+    main()
