@@ -18,15 +18,29 @@ def encode_image_b64(image_path: str):
 def generate_landing_page_from_image(image_path: str, audio_path: str):
     transcription = stt(audio_path)
     mime, b64 = encode_image_b64(image_path)
-    prompt = (
-        "You are a senior web developer. Given the following image of a hand-drawn landing page, "
-        "generate a complete single-file HTML for a modern, responsive landing page. "
-        "Use Tailwind CSS via CDN for all styling. Only output the code, no explanations. "
-        "Keep the exact layout of the original drawing in the landing page (i.e. if the designer wants an image at the bottom, keep it on the bottom) "
-        "Use eye-catching, beautiful UI/UX colors throughout. If there are empty spaces or placeholders "
-        "that have not been sketched in by the designer, fill them in with visually appealing, cool, and modern colors "
-        "and layouts so the page looks polished and attractive overall. DO NOT ADD IN IMAGES!, just use placeholders"
-    )
+    prompt = """
+    You are a senior website designer and developer. Given the following image of a hand-drawn landing page, generate a complete single-file HTML for a modern, minimal, responsive landing page.
+
+    Keep the exact layout of the original drawing in the landing page (e.g., if the designer wants an image at the bottom, keep it on the bottom). just use placeholders.
+    Make sure it follows best practices for the max width of a website.
+
+    Place the components in the website at an appropriate distance, position, and size, since hand drawn sketch might not perfectly illustrate the ideal dimensions. Use your best judgement.
+
+    Follow the best practices for a landing page when it comes to font sizing. For example, the hero text should be large and the subheading should be smaller. But do try to retain the relative sizing and spacing, positioning as drawn.
+    
+    Correctly identify the buttons if they are drawn in the image.
+
+    Images are marked as a rectangle with an large X in it. Just use a placeholder container for the image for now. Do not add images.
+
+    Let's use Inter as a default font family using this CDN definition:
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    All text on the website should use Inter font. Don't use bold. Use medium font weight at most.
+
+    Use Tailwind CSS via CDN for all styling.
+
+    You should only respond with the output code, no explanations.
+    """
 
     prompt = str(prompt)
     prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
