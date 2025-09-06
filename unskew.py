@@ -151,4 +151,38 @@ def camera_demo():
 
 if __name__ == "__main__":
     # capture_unskewed_photo()
-    camera_demo()
+    while True:
+        camera_demo()
+
+        cam = cv2.VideoCapture(0)
+        cv2.namedWindow("Input")
+        cv2.namedWindow("Output")
+        dst = None
+
+        while True:
+            ret, frame = cam.read()
+            if ret:
+                dst = unskew(frame)
+                try:
+                    cv2.imshow("Input", dst)
+                except cv2.error:
+                    pass
+                cv2.imshow("Output", frame)
+            if cv2.waitKey(1) == ord("q"):
+                break
+
+        cam.release()
+        last_frame = np.asarray(Image.open("image.jpg"))
+        save(last_frame, "prev_image.jpg")
+        save(np.asarray(dst), "image.jpg")
+
+        out = (
+            magic_edit("image.jpg", "prev_image.jpg", "out.html")
+            .replace("```html", "")
+            .replace("```", "")
+        )
+        with open("out.html", "w+") as f:
+            f.write(out)
+        import os
+
+        os.system("open out.html")
