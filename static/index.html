@@ -5,6 +5,7 @@
     <title>Display Webcam Stream</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/gh/addpipe/simple-recorderjs-demo@master/js/recorder.js"></script>
 
     <style>
       video {
@@ -37,10 +38,31 @@
     <script>
       var video = document.querySelector("video");
 
+      let audioContext;
+      var gumStream; //stream from getUserMedia()
+      var rec; //Recorder.js object
+      var input; //
+
       if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices
-          .getUserMedia({ video: true })
+          .getUserMedia({ video: true, audio: true })
           .then(function (stream) {
+            audioContext = new AudioContext();
+            /*  assign to gumStream for later use  */
+            gumStream = stream;
+
+            /* use the stream */
+            input = audioContext.createMediaStreamSource(stream);
+
+            /* 
+			Create the Recorder object and configure to record mono sound (1 channel)
+			Recording 2 channels  will double the file size
+		*/
+            rec = new Recorder(input, { numChannels: 1 });
+
+            //start the recording process
+            rec.record();
+
             video.srcObject = stream;
           })
           .catch(function (err0r) {
@@ -59,14 +81,34 @@
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         let image = canvas.toDataURL("image/jpeg");
-        fetch("http://127.0.0.1:5000/snapshot", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ image_data: image }),
-        });
+
+        //tell the recorder to stop the recording
+        rec.stop();
+
+        //stop microphone access
+        gumStream.getAudioTracks()[0].stop();
+
+        function sendReq(blob) {
+          function blobToDataURL(blob, callback) {
+            var a = new FileReader();
+            a.onload = function (e) {
+              callback(e.target.result);
+            };
+            a.readAsDataURL(blob);
+          }
+
+          blobToDataURL(blob, (url) => {
+            fetch("http://127.0.0.1:5000/snapshot", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ image_data: image, audio: url }),
+            });
+          });
+        }
+        rec.exportWAV(sendReq);
       }
 
       var btn = document.querySelector("#capture");
