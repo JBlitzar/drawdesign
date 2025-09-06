@@ -195,9 +195,7 @@ def camera_demo():
     cam.release()
     save(np.asarray(dst), "image.jpg")
     out = (
-        generate_landing_page_from_image(
-            "image.jpg",
-        )  # "temp_audio.wav")
+        generate_landing_page_from_image("image.jpg", "temp_audio.wav")
         .replace("```html", "")
         .replace("```", "")
     )
@@ -241,9 +239,7 @@ if __name__ == "__main__":
 
         out = (
             update_landing_page_with_edits(
-                "image.jpg",
-                "prev_image.jpg",
-                "out.html",  # , "temp_audio.wav"
+                "image.jpg", "prev_image.jpg", "out.html", "temp_audio.wav"
             )
             .replace("```html", "")
             .replace("```", "")

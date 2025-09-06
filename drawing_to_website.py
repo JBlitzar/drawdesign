@@ -3,6 +3,7 @@ import mimetypes
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from stt import stt
 
 
 def encode_image_b64(image_path: str):
@@ -14,7 +15,8 @@ def encode_image_b64(image_path: str):
     return mime, b64
 
 
-def generate_landing_page_from_image(image_path: str):
+def generate_landing_page_from_image(image_path: str, audio_path: str):
+    transcription = stt(audio_path)
     mime, b64 = encode_image_b64(image_path)
     prompt = (
         "You are a senior web developer. Given the following image of a hand-drawn landing page, "
@@ -25,6 +27,9 @@ def generate_landing_page_from_image(image_path: str):
         "that have not been sketched in by the designer, fill them in with visually appealing, cool, and modern colors "
         "and layouts so the page looks polished and attractive overall. DO NOT ADD IN IMAGES!, just use placeholders"
     )
+
+    prompt = str(prompt)
+    prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
     client = OpenAI()
     result = client.responses.create(
         model="chatgpt-4o-latest",

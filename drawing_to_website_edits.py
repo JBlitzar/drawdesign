@@ -10,6 +10,7 @@ import mimetypes
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from stt import stt
 
 
 def encode_image_b64(image_path: str):
@@ -22,10 +23,12 @@ def encode_image_b64(image_path: str):
 
 
 def update_landing_page_with_edits(
-    new_image_path: str, old_image_path: str, html_path: str
+    new_image_path: str, old_image_path: str, html_path: str, audio_path: str
 ):
     new_mime, b64_new = encode_image_b64(new_image_path)
     old_mime, b64_old = encode_image_b64(old_image_path)
+
+    transcription = stt(audio_path)
 
     html_content = ""
     with open(html_path, "r") as f:
@@ -40,6 +43,9 @@ def update_landing_page_with_edits(
     )
     prompt = str(prompt)
     prompt += f"The previous HTML content follows: {html_content}. "
+
+    prompt = str(prompt)
+    prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
     print(prompt)
 
     client = OpenAI()
