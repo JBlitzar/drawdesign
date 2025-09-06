@@ -4,14 +4,24 @@ from PIL import Image
 import itertools
 
 
-def main(inp="photo.jpg", out="unskewed.png"):
-    def save(img, name="out.png"):
-        im = Image.fromarray(img)  # (img * 255).astype(np.uint8)
-        im.save(name)
+def save(img, name="out.png"):
+    im = Image.fromarray(img)  # (img * 255).astype(np.uint8)
+    im.save(name)
 
-    img = np.array(Image.open(inp))
-    print(img.shape)
 
+def capture_unskewed_photo(out="unskewed.png"):
+    cam = cv2.VideoCapture(0)
+    ret = False
+    frame = None
+    while not ret:
+        ret, frame = cam.read()
+
+    cam.release()
+    dst = unskew(frame)
+    save(dst, out)
+
+
+def unskew(img):
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
     gray = gray / np.max(gray) * 255
@@ -90,9 +100,16 @@ def main(inp="photo.jpg", out="unskewed.png"):
         M, mask = cv2.findHomography(np.float32(corners), pts2)
 
         dst = cv2.warpPerspective(img, M, size)
+        return dst
 
-        save(dst, out)
+
+def main(inp="photo.jpg", out="unskewed.png"):
+    img = np.array(Image.open(inp))
+    print(img.shape)
+    dst = unskew(img)
+    save(dst, out)
 
 
 if __name__ == "__main__":
-    main()
+    capture_unskewed_photo()
+    # main()
