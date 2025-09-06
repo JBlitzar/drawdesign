@@ -1,5 +1,83 @@
-<html>
-  <body>
-    <h1>Hello world</h1>
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <title>Display Webcam Stream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+      video {
+        height: 100%;
+        margin: auto;
+        object-fit: fill;
+        display: flex;
+        justify-content: center;
+      }
+
+      button {
+        justify-content: center;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-basis: 80px;
+      }
+    </style>
+  </head>
+
+  <body class="w-full h-full bg-black">
+    <div class="container w-full h-full">
+      <video id="my-video" autoplay="true"></video>
+      <div class="toolbar">
+        <button id="capture" class="bg-white">Capture</button>
+      </div>
+    </div>
+
+    <script>
+      var video = document.querySelector("video");
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(function (stream) {
+            video.srcObject = stream;
+          })
+          .catch(function (err0r) {
+            console.log("Something went wrong!");
+          });
+      }
+
+      function takePicture() {
+        let canvas = document.createElement("canvas");
+        let video = document.getElementById("my-video");
+
+        canvas.width = 1920;
+        canvas.height = 1080;
+
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        let image = canvas.toDataURL("image/jpeg");
+        fetch("http://127.0.0.1:5000/snapshot", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ image_data: image }),
+        });
+      }
+
+      var btn = document.querySelector("#capture");
+      btn.addEventListener(
+        "click",
+        (ev) => {
+          takePicture();
+          ev.preventDefault();
+        },
+        false
+      );
+    </script>
   </body>
 </html>
