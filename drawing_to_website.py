@@ -30,7 +30,7 @@ def generate_landing_page_from_image(image_path: str, audio_path: str):
     
     Correctly identify the buttons if they are drawn in the image.
 
-    Images are marked as a rectangle with an large X in it. Just use a placeholder container for the image for now. Do not add images.
+    Images are marked as a rectangle with an large X in it. Show related images as emojis if possible.
 
     Let's use Inter as a default font family using this CDN definition:
     <link rel="preconnect" href="https://rsms.me/">
