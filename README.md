@@ -2,7 +2,7 @@
 
 ## Overview
 
-DrawDesign is a tool that helps lower the barrier to entry for creating websites. We wanted to build it to esepcially help small business owners who aren't neccessarily technical to turn the ideas in their head into reality. We think this can also help designers for rapid prototyping by integrating into their existing component library. Designers still like visualizing their barebones ideas with pen and paper. This extends that by showing a live demo on the web.
+DrawDesign is a tool that helps lower the barrier to entry for creating websites. This could be used to help nontechnical small business owners to turn the ideas in their head into reality. This could also help designers for rapid prototyping by integrating into their existing component library. Designers still like visualizing and experimenting with their barebones ideas with pen and paper. This extends that workflow by showing a live demo on the web.
 
 ## Running the Program
 
