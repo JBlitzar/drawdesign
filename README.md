@@ -6,7 +6,11 @@ DrawDesign is a tool that helps lower the barrier to entry for creating websites
 
 ## Running the Program
 
-Just download our dependencies and run 'uv run unskew.py' in your terminal!
+- git clone
+- `uv sync`
+- Install portaudio
+- Make sure you have an OpenAI key either in an environment variable or in .env
+- `uv run unskew.py` in your terminal!
 
 ## Technical Highlights
 
