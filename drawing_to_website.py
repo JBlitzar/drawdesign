@@ -44,6 +44,7 @@ def generate_landing_page_from_image(image_path: str, audio_path: str):
 
     prompt = str(prompt)
     prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
+    print("got prompt:", prompt)
     client = OpenAI()
     result = client.responses.create(
         model="chatgpt-4o-latest",
@@ -59,6 +60,7 @@ def generate_landing_page_from_image(image_path: str, audio_path: str):
         max_output_tokens=2000,
         temperature=0.2,
     )
+    print(result)
     return result.output_text
 
 

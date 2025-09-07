@@ -27,8 +27,10 @@ def update_landing_page_with_edits(
 ):
     new_mime, b64_new = encode_image_b64(new_image_path)
     old_mime, b64_old = encode_image_b64(old_image_path)
+    print("encoded")
 
     transcription = stt(audio_path)
+    print("transcribed")
 
     html_content = ""
     with open(html_path, "r") as f:
@@ -46,7 +48,7 @@ def update_landing_page_with_edits(
 
     prompt = str(prompt)
     prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
-    print(prompt)
+    print("edit prompt,", prompt)
 
     client = OpenAI()
     result = client.responses.create(

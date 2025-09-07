@@ -144,7 +144,7 @@ class AudioRecorder:
     def record(self):
         self.stream.start_stream()
         while self.open == True:
-            data = self.stream.read(self.frames_per_buffer)
+            data = self.stream.read(self.frames_per_buffer, exception_on_overflow=False)
             self.audio_frames.append(data)
             if self.open == False:
                 break
@@ -193,6 +193,7 @@ def camera_demo():
         if cv2.waitKey(1) == ord("q"):
             break
     rec.stop()
+    del rec
     cam.release()
     save(np.asarray(dst), "image.jpg")
     out = (
@@ -240,6 +241,7 @@ if __name__ == "__main__":
 
         cam.release()
         rec.stop()
+        del rec
         last_frame = np.asarray(Image.open("image.jpg"))
         save(last_frame, "prev_image.jpg")
         save(np.asarray(dst), "image.jpg")
