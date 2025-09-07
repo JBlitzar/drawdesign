@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 from PIL import Image
-import itertools
-from drawing_to_website import generate_landing_page_from_image
-from drawing_to_website_edits import update_landing_page_with_edits
 
 
 def save(img, name="out.png"):
@@ -27,88 +24,63 @@ def capture_unskewed_photo(out="unskewed.png"):
 
 
 def unskew(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(gray, 50, 150)
+    edges = cv2.dilate(edges, np.ones((3, 3), np.uint8), iterations=1)
 
-    gray = gray / np.max(gray) * 255
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return img
 
-    gray = (gray > 180) * 255
+    cnt = max(contours, key=cv2.contourArea)
 
-    gray = gray.astype(np.uint8)
+    peri = cv2.arcLength(cnt, True)
+    approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
+    if len(approx) < 4:
+        hull = cv2.convexHull(cnt)
+        approx = cv2.approxPolyDP(hull, 0.02 * cv2.arcLength(hull, True), True)
+    if len(approx) != 4:
+        rect = cv2.minAreaRect(cnt)
+        box = cv2.boxPoints(rect)
+        approx = np.int0(box)
 
-    # save(gray, "gray-init.png")
+    pts = approx.reshape(-1, 2).astype(np.float32)
 
-    kernel = np.ones((5, 5), np.uint8)
+    # Order corners: tl, tr, br, bl
+    s = pts.sum(axis=1)
+    diff = np.diff(pts, axis=1).reshape(-1)
+    tl = pts[np.argmin(s)]
+    br = pts[np.argmax(s)]
+    tr = pts[np.argmin(diff)]
+    bl = pts[np.argmax(diff)]
+    ordered = np.array([tl, tr, br, bl], dtype=np.float32)
 
-    gray = cv2.erode(gray, kernel, iterations=5)
-    gray = cv2.dilate(gray, kernel, iterations=5)
+    # Compute target size preserving orientation (portrait or landscape)
+    widthA = np.linalg.norm(br - bl)
+    widthB = np.linalg.norm(tr - tl)
+    heightA = np.linalg.norm(tr - br)
+    heightB = np.linalg.norm(tl - bl)
+    maxWidth = int(max(widthA, widthB))
+    maxHeight = int(max(heightA, heightB))
+    maxWidth = max(100, maxWidth)
+    maxHeight = max(100, maxHeight)
 
-    kernel = np.ones((11, 11), np.uint8)
+    dst_pts = np.array(
+        [[0, 0], [maxWidth - 1, 0], [maxWidth - 1, maxHeight - 1], [0, maxHeight - 1]],
+        dtype=np.float32,
+    )
+    M = cv2.getPerspectiveTransform(ordered, dst_pts)
+    dst = cv2.warpPerspective(img, M, (maxWidth, maxHeight))
 
-    gray = cv2.dilate(gray, kernel, iterations=5)
-    gray = cv2.erode(gray, kernel, iterations=5)
+    # Ensure upright orientation: if upside down (more dark pixels in top vs bottom), flip
+    # Simple heuristic to avoid upside-down or mirror effects
+    top = dst[: maxHeight // 3, :, :]
+    bottom = dst[-maxHeight // 3 :, :, :]
+    if top.mean() < bottom.mean():
+        dst = cv2.rotate(dst, cv2.ROTATE_180)
 
-    # gray = cv2.dilate(gray, kernel, iterations=2)
-    # gray = cv2.erode(gray, kernel, iterations=2)
-
-    # save(gray, "gray.png")
-
-    # from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-    def intersects(a, b, c, d, p, q, r, s):
-        det = (c - a) * (s - q) - (r - p) * (d - b)
-        if det == 0:
-            return False
-        else:
-            lambda_ = ((s - q) * (r - a) + (p - r) * (s - b)) / det
-            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det
-            return (0 < lambda_ < 1) and (0 < gamma < 1)
-
-    # lenght of line, implemented by me
-    def length(a, b, c, d):
-        dy = d - b
-        dx = c - a
-        return np.sqrt(dy**2 + dx**2)
-
-    contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if contours:
-        cnt = max(contours, key=cv2.contourArea)
-
-        epsilon = 0.02 * cv2.arcLength(cnt, True)
-        approx = cv2.approxPolyN(cnt, 4, epsilon_percentage=epsilon, ensure_convex=True)
-        corners = approx.reshape(-1, 2)
-
-        mask = np.zeros_like(gray)
-        cv2.drawContours(mask, [cnt], -1, 255, -1)
-        for c in corners:
-            cv2.circle(mask, tuple(c), 50, 120, -1)
-
-        gray = mask
-
-        assert len(corners) == 4
-
-        for ordering in itertools.permutations(corners):
-            # if AB intersects CD
-            o = ordering
-            a = o[0]
-            b = o[1]
-            c = o[2]
-            d = o[3]
-            if intersects(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1]) and length(
-                a[0], a[1], c[0], c[1]
-            ) < length(b[0], b[1], c[0], c[1]):
-                # probably good! corners intersect.
-                corners = [a, c, b, d]
-                break
-
-        size = (int(11 * 100), int(8.5 * 100))
-        pts2 = np.float32([[0, 0], [size[0], 0], [size[0], size[1]], [0, size[1]]])
-        # https://math.stackexchange.com/questions/2789094/deskew-and-rotate-a-photographed-rectangular-image-aka-perspective-correction
-        M, mask = cv2.findHomography(np.float32(corners), pts2)
-
-        dst = cv2.warpPerspective(img, M, size)
-
-        dst = cv2.rotate(dst, cv2.ROTATE_90_COUNTERCLOCKWISE)
-
-        return dst
+    return dst
 
 
 def main(inp="photo.jpg", out="unskewed.png"):
@@ -116,146 +88,4 @@ def main(inp="photo.jpg", out="unskewed.png"):
     print(img.shape)
     dst = unskew(img)
     save(dst, out)
-
-
-import wave, threading, pyaudio
-
-
-class AudioRecorder:
-    # Audio class based on pyAudio and Wave
-    def __init__(self):
-        self.open = True
-        self.rate = 44100
-        self.frames_per_buffer = 1024
-        self.channels = 1
-        self.format = pyaudio.paInt16
-        self.audio_filename = "temp_audio.wav"
-        self.audio = pyaudio.PyAudio()
-        self.stream = self.audio.open(
-            format=self.format,
-            channels=self.channels,
-            rate=self.rate,
-            input=True,
-            frames_per_buffer=self.frames_per_buffer,
-        )
-        self.audio_frames = []
-
-    # Audio starts being recorded
-    def record(self):
-        self.stream.start_stream()
-        while self.open == True:
-            data = self.stream.read(self.frames_per_buffer, exception_on_overflow=False)
-            self.audio_frames.append(data)
-            if self.open == False:
-                break
-
-    # Finishes the audio recording therefore the thread too
-    def stop(self):
-        if self.open == True:
-            self.open = False
-            self.stream.stop_stream()
-            self.stream.close()
-            self.audio.terminate()
-
-            waveFile = wave.open(self.audio_filename, "wb")
-            waveFile.setnchannels(self.channels)
-            waveFile.setsampwidth(self.audio.get_sample_size(self.format))
-            waveFile.setframerate(self.rate)
-            waveFile.writeframes(b"".join(self.audio_frames))
-            waveFile.close()
-
-        pass
-
-    # Launches the audio recording function using a thread
-    def start(self):
-        audio_thread = threading.Thread(target=self.record)
-        audio_thread.start()
-
-
-def camera_demo():
-    rec = AudioRecorder()
-    rec.start()
-    cam = cv2.VideoCapture(0)
-    cv2.namedWindow("Input")
-    cv2.moveWindow("Input", 1000, 0)
-    cv2.namedWindow("Output")
-    dst = None
-
-    while True:
-        ret, frame = cam.read()
-        if ret:
-            dst = unskew(frame)
-            try:
-                cv2.imshow("Input", dst)
-            except cv2.error:
-                pass
-            cv2.imshow("Output", frame)
-        if cv2.waitKey(1) == ord("q"):
-            break
-    rec.stop()
-    del rec
-    cam.release()
-    save(np.asarray(dst), "image.jpg")
-    out = (
-        generate_landing_page_from_image("image.jpg", "temp_audio.wav")
-        .replace("```html", "")
-        .replace("```", "")
-    )
-    with open("out.html", "w+") as f:
-        f.write(out)
-    import os
-
-    os.system("open out.html")
-
-
-if __name__ == "__main__":
-    # capture_unskewed_photo()
-    camera_demo()
-    print("camera demo run!")
-    while True:
-        print("running again...")
-        rec = AudioRecorder()
-        rec.start()
-        cam = cv2.VideoCapture(0)
-        cv2.namedWindow("Input")
-        cv2.namedWindow("Output")
-        cv2.moveWindow("Input", 1000, 0)
-        dst = None
-        print("made more windows")
-
-        while True:
-            ret, frame = cam.read()
-            if ret:
-                dst = unskew(frame)
-                try:
-                    cv2.imshow("Input", dst)
-                except cv2.error:
-                    pass
-                cv2.imshow("Output", frame)
-            if cv2.waitKey(1) == ord("q"):
-                print("cv2.waitkey was q I guess")
-                break
-            print("cv2 looopoa")
-
-        print("done")
-
-        cam.release()
-        rec.stop()
-        del rec
-        last_frame = np.asarray(Image.open("image.jpg"))
-        save(last_frame, "prev_image.jpg")
-        save(np.asarray(dst), "image.jpg")
-        print("saved images etc, updating landing page......")
-
-        out = (
-            update_landing_page_with_edits(
-                "image.jpg", "prev_image.jpg", "out.html", "temp_audio.wav"
-            )
-            .replace("```html", "")
-            .replace("```", "")
-        )
-        with open("out.html", "w+") as f:
-            f.write(out)
-        import os
-
-        os.system("open out.html")
+    

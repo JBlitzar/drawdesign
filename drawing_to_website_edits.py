@@ -23,13 +23,18 @@ def encode_image_b64(image_path: str):
 
 
 def update_landing_page_with_edits(
-    new_image_path: str, old_image_path: str, html_path: str, audio_path: str
+    new_image_path: str, old_image_path: str, html_path: str, audio_path: str | None = None
 ):
     new_mime, b64_new = encode_image_b64(new_image_path)
     old_mime, b64_old = encode_image_b64(old_image_path)
     print("encoded")
 
-    transcription = stt(audio_path)
+    transcription = ""
+    if audio_path:
+        try:
+            transcription = stt(audio_path)
+        except Exception:
+            transcription = ""
     print("transcribed")
 
     html_content = ""
@@ -72,7 +77,6 @@ def update_landing_page_with_edits(
         max_output_tokens=3000,
         temperature=0.2,
     )
-    print("result:", result.output_text)
     return result.output_text
 
 

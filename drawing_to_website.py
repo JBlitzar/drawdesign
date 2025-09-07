@@ -15,8 +15,13 @@ def encode_image_b64(image_path: str):
     return mime, b64
 
 
-def generate_landing_page_from_image(image_path: str, audio_path: str):
-    transcription = stt(audio_path)
+def generate_landing_page_from_image(image_path: str, audio_path: str | None = None):
+    transcription = ""
+    if audio_path:
+        try:
+            transcription = stt(audio_path)
+        except Exception:
+            transcription = ""
     mime, b64 = encode_image_b64(image_path)
     prompt = """
     You are a senior website designer and developer. Given the following image of a hand-drawn landing page, generate a complete single-file HTML for a modern, minimal, responsive landing page.
@@ -44,7 +49,6 @@ def generate_landing_page_from_image(image_path: str, audio_path: str):
 
     prompt = str(prompt)
     prompt += f"Here is a transcription of the user's narration while describing this: {transcription}"
-    print("got prompt:", prompt)
     client = OpenAI()
     result = client.responses.create(
         model="chatgpt-4o-latest",
@@ -60,7 +64,6 @@ def generate_landing_page_from_image(image_path: str, audio_path: str):
         max_output_tokens=2000,
         temperature=0.2,
     )
-    print(result)
     return result.output_text
 
 
