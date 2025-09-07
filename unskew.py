@@ -43,7 +43,7 @@ def unskew(img):
     if len(approx) != 4:
         rect = cv2.minAreaRect(cnt)
         box = cv2.boxPoints(rect)
-        approx = np.int0(box)
+        approx = np.int8(box)
 
     pts = approx.reshape(-1, 2).astype(np.float32)
 
@@ -88,4 +88,7 @@ def main(inp="photo.jpg", out="unskewed.png"):
     print(img.shape)
     dst = unskew(img)
     save(dst, out)
-    
+
+
+if __name__ == "__main__":
+    capture_unskewed_photo()
