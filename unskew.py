@@ -23,64 +23,85 @@ def capture_unskewed_photo(out="unskewed.png"):
     save(frame, "img.jpg")
 
 
+def unskew_video():
+    cam = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cam.read()
+        if not ret:
+            break
+        dst = unskew(frame)
+        cv2.imshow("Unskewed", dst)
+        cv2.imshow("Original", frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+
 def unskew(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+    gray = gray / np.max(gray) * 255
+
+    gray = (gray > 180) * 255
+
+    gray = gray.astype(np.uint8)
+
+    # save(gray, "gray-init.png")
+
+    kernel = np.ones((5, 5), np.uint8)
+
+    gray = cv2.erode(gray, kernel, iterations=5)
+    gray = cv2.dilate(gray, kernel, iterations=5)
+
+    kernel = np.ones((11, 11), np.uint8)
+
+    gray = cv2.dilate(gray, kernel, iterations=5)
+    gray = cv2.erode(gray, kernel, iterations=5)
     edges = cv2.Canny(gray, 50, 150)
     edges = cv2.dilate(edges, np.ones((3, 3), np.uint8), iterations=1)
 
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        return img
+    def order_points(pts_: np.ndarray) -> np.ndarray:
+        ys = pts_[:, 1]
+        top_idxs = ys.argsort()[:2]
+        bot_idxs = ys.argsort()[-2:]
+        top = pts_[top_idxs]
+        bot = pts_[bot_idxs]
+        top = top[np.argsort(top[:, 0])]
+        bot = bot[np.argsort(bot[:, 0])]
+        tl, tr = top[0], top[1]
+        bl, br = bot[0], bot[1]
+        return np.array([tl, tr, br, bl], dtype=np.float32)
 
-    cnt = max(contours, key=cv2.contourArea)
+    contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if contours:
+        cnt = max(contours, key=cv2.contourArea)
 
-    peri = cv2.arcLength(cnt, True)
-    approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
-    if len(approx) < 4:
-        hull = cv2.convexHull(cnt)
-        approx = cv2.approxPolyDP(hull, 0.02 * cv2.arcLength(hull, True), True)
-    if len(approx) != 4:
-        rect = cv2.minAreaRect(cnt)
-        box = cv2.boxPoints(rect)
-        approx = np.int8(box)
+        epsilon = 0.02 * cv2.arcLength(cnt, True)
+        approx = cv2.approxPolyN(cnt, 4, epsilon_percentage=epsilon, ensure_convex=True)
+        corners = approx.reshape(-1, 2)
 
-    pts = approx.reshape(-1, 2).astype(np.float32)
+        mask = np.zeros_like(gray)
+        cv2.drawContours(mask, [cnt], -1, 255, -1)
+        for c in corners:
+            cv2.circle(mask, tuple(c), 50, 120, -1)
 
-    # Order corners: tl, tr, br, bl
-    s = pts.sum(axis=1)
-    diff = np.diff(pts, axis=1).reshape(-1)
-    tl = pts[np.argmin(s)]
-    br = pts[np.argmax(s)]
-    tr = pts[np.argmin(diff)]
-    bl = pts[np.argmax(diff)]
-    ordered = np.array([tl, tr, br, bl], dtype=np.float32)
+        gray = mask
 
-    # Compute target size preserving orientation (portrait or landscape)
-    widthA = np.linalg.norm(br - bl)
-    widthB = np.linalg.norm(tr - tl)
-    heightA = np.linalg.norm(tr - br)
-    heightB = np.linalg.norm(tl - bl)
-    maxWidth = int(max(widthA, widthB))
-    maxHeight = int(max(heightA, heightB))
-    maxWidth = max(100, maxWidth)
-    maxHeight = max(100, maxHeight)
+        assert len(corners) == 4
 
-    dst_pts = np.array(
-        [[0, 0], [maxWidth - 1, 0], [maxWidth - 1, maxHeight - 1], [0, maxHeight - 1]],
-        dtype=np.float32,
-    )
-    M = cv2.getPerspectiveTransform(ordered, dst_pts)
-    dst = cv2.warpPerspective(img, M, (maxWidth, maxHeight))
+        corners = order_points(corners)
 
-    # Ensure upright orientation: if upside down (more dark pixels in top vs bottom), flip
-    # Simple heuristic to avoid upside-down or mirror effects
-    top = dst[: maxHeight // 3, :, :]
-    bottom = dst[-maxHeight // 3 :, :, :]
-    if top.mean() < bottom.mean():
-        dst = cv2.rotate(dst, cv2.ROTATE_180)
+        size = (int(11 * 100), int(8.5 * 100))
+        pts2 = np.float32([[0, 0], [size[0], 0], [size[0], size[1]], [0, size[1]]])
+        # https://math.stackexchange.com/questions/2789094/deskew-and-rotate-a-photographed-rectangular-image-aka-perspective-correction
+        M, mask = cv2.findHomography(np.float32(corners), pts2)
 
-    return dst
+        dst = cv2.warpPerspective(img, M, size)
+
+        dst = cv2.flip(dst, 0)
+
+        return dst
+
+    return img
 
 
 def main(inp="photo.jpg", out="unskewed.png"):
@@ -91,4 +112,4 @@ def main(inp="photo.jpg", out="unskewed.png"):
 
 
 if __name__ == "__main__":
-    capture_unskewed_photo()
+    unskew_video()
